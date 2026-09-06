@@ -1,0 +1,14 @@
+*.exe
+*.dcu
+*.o
+*.ppu
+*.a
+*.identcache
+*.local
+*.dproj.local
+__history/
+__recovery/
+Win32/
+Win64/
+.env
+.DS_Store
