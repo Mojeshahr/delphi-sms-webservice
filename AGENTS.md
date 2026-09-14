@@ -1,125 +1,220 @@
-# Agent guide
+# Working with this repository
 
-Runnable Delphi examples for the Payam Resan SMS web service. One file per API
-method, and every file has to work on its own.
+You are looking at runnable Delphi examples for the **Payam Resan** SMS web
+service (`api.sms-webservice.com`, API V3), an Iranian SMS provider. Someone is
+probably asking you to add SMS to a Delphi application — often an existing
+business, accounting or inventory program.
 
-## Rule one: no dependencies
+Copy the example that matches the method, adapt it, and keep the rules below.
 
-An example runs with a stock Delphi and nothing else. `System.Net.HttpClient`,
-`System.JSON` and `System.NetEncoding` are all in the RTL, so there is no
-component to install and nothing from GetIt. A reader copies the file into
-their project and it builds.
+## Read this first: these were not built on real Delphi
 
-The same rule rules out helpers from this repository. There is no shared client
-unit here and there should not be one: a function defined in `utils/` means
-nothing to somebody reading the file on the documentation site.
+The Delphi compiler is Windows-only and commercial, so the examples here were
+compiled and run with Free Pascal in Delphi compatibility mode, not with
+`dcc32`. That checks syntax, structure and call signatures. It does **not**
+prove that Embarcadero's implementation behaves identically — if a signature was
+read wrongly, the same mistake sits in both the stand-in and the example and the
+test still passes.
 
-## Rule two: two sets, and they stay in step
+So: treat these as a correct shape, not as a verified build. Tell the user that
+the first compile on their RAD Studio is the real test, and that a compiler error
+here is worth reporting as an issue rather than working around silently.
 
-`examples/v3/` uses `THTTPClient` from the RTL. `examples/v3-indy/` uses Indy's
-`TIdHTTP`, for projects whose network layer already runs on Indy.
+## Which set to use
 
-Both sets carry the same eleven file names. A change to a method's payload,
-field names or output belongs in both files or in neither. The Indy header
-comment deliberately points at the main set rather than repeating the whole
-explanation, so the long-form description exists once.
+There are two complete sets of the same eleven examples:
 
-Only the HTTP call differs. The JSON building and reading, the `Success` check
-and the printed output are identical on purpose.
+| | `examples/v3/` | `examples/v3-indy/` |
+|---|---|---|
+| HTTP | `THTTPClient` | `TIdHTTP` + `TIdSSLIOHandlerSocketOpenSSL` |
+| TLS on Windows | from the system | OpenSSL DLLs beside the binary |
+| Minimum | XE8 | XE6 |
 
-## Rule three: the file name and the program name differ
+**Take `examples/v3/` unless the user's project already runs on Indy.** Getting
+OpenSSL in place is the most common source of trouble on the Indy path: that
+handler needs the OpenSSL DLLs next to the executable, and their absence is the
+usual failure. The Indy set exists for the developer maintaining older software
+where adding a second HTTP stack is a nuisance.
 
-The reference page slug is kebab-case, so the file is `send-bulk.dpr`, while
-Pascal needs an identifier, so the program is `SendBulk`. The Indy set appends
-`Indy` to the program name so the two can sit in one project group without a
-clash. The file name is what ties an example to its documentation page and is
-never changed to match the identifier.
+Both sets read JSON with `System.JSON`, which has been in the RTL since XE6, so
+the Indy set does **not** lower the floor to Delphi 7. Below XE6 the JSON part
+has to be replaced with something like SuperObject.
 
-## Rule four: the examples are the documentation
+The Indy examples configure no TLS version explicitly. On an older Indy whose
+default is SSLv3/TLS 1.0, the handshake will simply fail against this service —
+set `SSLOptions.Method` to at least `sslvTLSv1_2` if that happens.
 
-Each file carries `// docs:start` and `// docs:end`. The region between them is
-lifted verbatim into the method's page on docs.payam-resan.com, so it is read by
-people who have never seen this repository.
+## Running one
 
-Two consequences:
+```
+set PAYAM_RESAN_API_KEY=123456-XXXXXXXXXXXXXXX
+set PAYAM_RESAN_SENDER=30004040
 
-- **Full-line comments are stripped** when the region is lifted. Anything the
-  reader must see has to be code. The `Success` check is an `if`, not a note.
-- The file name matches the reference page slug exactly. A path with two
-  variants gets two files, the plain name for `POST` and a `-get` suffix for
-  `GET`.
-
-The full contract lives in the `handbook` repository, section `docs-site`, file
-`code-samples.md`.
-
-## Rule five: check Success, never the status code
-
-The service answers `200` to everything, including a wrong key and an empty
-account, so `Answer.StatusCode` proves nothing:
-
-```pascal
-if not SameText(Response.GetValue('Success').Value, 'true') then
-begin
-  Writeln('ناموفق. کد ', Response.GetValue('ErrorCode').Value,
-          ': ', Response.GetValue('Error').Value);
-  Halt(1);
-end;
+dcc32 examples\v3\account-info.dpr
+account-info.exe
 ```
 
-`SameText` rather than `<>` is deliberate. The comparison is against a JSON
-boolean rendered as text, and the harness found one implementation returning
-`True` where Delphi returns `true`. Case-insensitive costs nothing and removes
-a whole class of surprise.
+There is no `.dproj` and no project group: every example is a bare
+`{$APPTYPE CONSOLE}` program. Start with `account-info.dpr` — it sends nothing,
+spends no credit, and answering proves the key and the connection.
 
-## Rule six: build the body with TEncoding.UTF8
+The file name is kebab-case to match the documentation page; the program
+identifier inside is Pascal (`SendBulk`). In the Indy set the identifier gets an
+`Indy` suffix so both can sit in one project group.
+
+## Rule 1: `TEncoding.UTF8` on the request body
+
+This is the single thing most often dropped when someone adapts an example, and
+Persian text is silently mangled when it is:
 
 ```pascal
 Body := TStringStream.Create(Payload.ToJSON, TEncoding.UTF8);
 ```
 
-Leave the encoding off and the Persian text goes out in the default Windows
-codepage, so the message arrives as question marks. This is the single most
-likely thing to be dropped when someone adapts an example.
+On the way back, the `THTTPClient` set uses
+`Answer.ContentAsString(TEncoding.UTF8)`. The Indy set relies on
+`Http.Request.Charset := 'utf-8'` instead.
 
-## Rule seven: a version is a folder
+## Rule 2: `Success`, never the HTTP status
 
-A new service version means a new `examples/v<n>/`. No file inside an existing
-version folder is moved or renamed; older versions still have users.
+The service answers `200` to everything, including a wrong key, an empty account
+and a malformed body.
 
-## Secrets
+The examples compare with `SameText`, deliberately — one implementation was
+found returning `True` where Delphi writes `true`, and a case-insensitive
+comparison costs nothing and removes a whole class of surprise.
 
-The key comes from `PAYAM_RESAN_API_KEY` in the environment. No key, no real
-phone number and no customer name goes into a file here, not even a dead one.
-Example numbers are `9121112222` upward and the example key is
-`123456-XXXXXXXXXXXXXXX`.
+`ErrorCode` is only meaningful when `Success` is false.
 
-## Layout
+## Rule 3: every JSON value comes back as a string
 
-| Path | What it holds |
-|---|---|
-| `examples/v3/` | one self-contained file per operation, using `THTTPClient` |
-| `examples/v3-indy/` | the same with `TIdHTTP` |
-| `testing/` | the Linux build harness, and what it does and does not prove |
-| `.env.example` | the environment variables the examples read |
+`GetValue('X').Value` is a `string`, even for numbers and booleans. So codes are
+compared as text, or converted first:
 
-## Before every commit
-
-```bash
-docker run --rm -v "$PWD:/w:ro" -v "$PWD/testing/fpc-shims:/shims:ro" \
-  -w /w fpc-check bash testing/run.sh
-docker run --rm -v "$PWD:/w:ro" -v "$PWD/testing/fpc-shims:/shims:ro" \
-  -w /w fpc-check bash testing/run-indy.sh
-docker run --rm -v "$PWD:/w:ro" -v "$PWD/testing/fpc-shims:/shims:ro" \
-  -w /w fpc-check bash testing/run-failure.sh
+```pascal
+Code := StrToIntDef(Message.GetValue('StatusCode').Value, -1);
 ```
 
-Read `testing/README.md` first. That harness is not a real Delphi build, and
-the difference matters when judging what a green run means.
+Arrays come through `Response.GetValue('Result').AsArray` into a `TJSONArray`
+and are walked by index.
 
-Point the examples at `api/V3SandBox/` before running one for real, so no
-message goes out.
+## Rule 4: outbound numbers must be `Int64`
 
-## Git
+A ten-digit Iranian mobile number overflows a 32-bit integer, and so does a
+message id. The casts in the examples are load-bearing:
 
-Semantic messages, `type(scope): subject`, with no explanatory body and no
-attribution trailer. Commits here are authored as Payam Resan.
+```pascal
+First.AddPair('Destination', Int64(9121112222));
+Payload.AddPair('Sender', StrToInt64(GetEnvironmentVariable('PAYAM_RESAN_SENDER')));
+```
+
+They also keep the wire format right: the service wants numbers, not quoted
+strings.
+
+## Rule 5: object lifetime here is wrong for a service
+
+The examples are one-shot console programs, so they are loose about freeing:
+only the `TStringStream` is protected with `try..finally`, the client is freed
+by a bare statement at the end, and `Payload` and the parsed `Response` are
+never freed at all. `Halt(1)` on the failure path skips the cleanup entirely.
+
+**Do not paste that into a long-running application.** Wrap the client, the
+payload and the parsed response in `try..finally` blocks. Child objects handed
+to a parent with `AddPair` or `AddElement` are owned by the parent — free the
+parent only, never the children.
+
+## Rule 6: the key never leaves the machine you control
+
+`GetEnvironmentVariable('PAYAM_RESAN_API_KEY')`. Never compile it into the
+binary: a string in an executable is trivially extracted with a hex editor. For
+a desktop program installed on customers' machines, the key belongs on a server
+the user controls, with the desktop app calling that server.
+
+And avoid `send.dpr` and `send-token-single-get.dpr` in production. Those are
+the `GET` methods, where the key sits in the URL and lands in the web server log
+and the `Referer` header.
+
+## Rule 7: pick the right method
+
+| The user wants | Use | File |
+|---|---|---|
+| one text to many people | `SendBulk` | `send-bulk.dpr` |
+| a different text per person | `SendMultiple` | `send-multiple.dpr` |
+| a one-time password or code | `SendTokenSingle` | `send-token-single.dpr` |
+| a template to many people | `SendTokenMulti` | `send-token-multi.dpr` |
+| delivery status | `StatusByUserTraceId` | `status-by-user-trace-id.dpr` |
+| balance and sender lines | `AccountInfo` | `account-info.dpr` |
+
+**A one-time password goes through a template**, not free text — that is the
+usual route for OTP, and the template fixes the sender line, which is why
+`SendTokenSingle` takes no `Sender`. `token-list.dpr` lists the account's
+templates; `Status` `'2'` means approved and sendable, `'1'` awaiting review,
+`'3'` rejected.
+
+## Rule 8: phone numbers have no leading zero
+
+The service wants `9121112222` or `989121112222`. Users type `09121112222` or
+`+989121112222`. Normalise before sending, or you get error `13`.
+
+Ninety-nine recipients per request is the ceiling for `SendBulk`,
+`SendMultiple` and `SendTokenMulti`.
+
+## Rule 9: encode the query exactly once
+
+`TNetEncoding.URL.Encode` encodes exactly once. Pre-encoding was a real bug here
+before it was caught: Persian text came out as `%C3%9A%C2%A9` where `%DA%A9` was
+meant, and the SMS arrived as gibberish.
+
+## Rule 10: always send a `UserTraceId`
+
+Use the user's own record id. After a timeout or error `100`, resending blind
+may send twice — `StatusByUserTraceId` is the only safe way to learn whether the
+message was registered. `StatusCode` of `'8'` there means the id is not in the
+account, so it is safe to send again.
+
+`SendTokenSingle` is the exception: it has no such input, so its `UserTraceId`
+comes back null. If a trace id is needed for an OTP, use `SendTokenMulti` with a
+single recipient.
+
+## Rule 11: know which errors are worth retrying
+
+These never succeed on retry — fix the cause; retrying only burns the rate limit
+until the account hits error `20`:
+
+`1`, `2`, `3`, `6`, `8`, `9`, `10`, `11`, `12`, `13`, `14`, `19`
+
+`19` is an empty balance; `10` means the caller's IP is not on the account's
+allowlist. Treat any unknown code the way you treat `100`: unclear outcome,
+check with `StatusByUserTraceId` before resending.
+
+## Rule 12: delivery status is a poll, not a callback
+
+Status codes `0`, `1`, `2`, `3` and `10` mean still in flight — query again
+later, and not more often than every few minutes. Everything else is final.
+Branch on `StatusCode`, never on the `Status` text, which is Persian prose meant
+for humans and can change.
+
+## Rule 13: `GetInbox` consumes what it returns
+
+The service hands over each incoming message **once**. A program that fetches
+the inbox and then crashes before storing the result has destroyed those
+messages. Write them to the database in the same run.
+
+The sender field is called `Form`, not `From`. That is the service's spelling.
+
+## Testing without spending credit
+
+Replace `V3` with `V3SandBox` in the URL. No message is sent and no credit is
+spent. `TokenList` is not implemented there.
+
+The sandbox is a simulator, not a mirror of the account: credit is always
+`1234567`, sender lines are invented, and **it accepts any key**. Success there
+proves nothing about the user's real key.
+
+## Where the authoritative answers are
+
+- Method reference and error tables: <https://docs.payam-resan.com>
+- Machine-readable OpenAPI: <https://github.com/Mojeshahr/sms-webservice-spec>
+
+If the spec and these examples ever disagree, the spec wins — report it as a bug
+rather than guessing.
