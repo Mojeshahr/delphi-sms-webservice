@@ -22,7 +22,7 @@ nothing to somebody reading the file on the documentation site.
 `examples/v3/` uses `THTTPClient` from the RTL. `examples/v3-indy/` uses Indy's
 `TIdHTTP`, for projects whose network layer already runs on Indy.
 
-Both sets carry the same eleven file names. A change to a method's payload,
+Both sets carry the same thirteen file names. A change to a method's payload,
 field names or output belongs in both files or in neither. The Indy header
 comment deliberately points at the main set rather than repeating the whole
 explanation, so the long-form description exists once.

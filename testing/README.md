@@ -22,9 +22,9 @@ hand to RAD Studio is the file that is compiled and run here.
 
 | | |
 |---|---|
-| Every file compiles | 22 of 22, both sets |
-| Every file runs against a stub that answers like the service | 22 of 22 |
-| Every file stops on a `200` carrying `Success: false` | 22 of 22, exit code 1 |
+| Every file compiles | 26 of 26, both sets |
+| Every file runs against a stub that answers like the service | 26 of 26 |
+| Every file stops on a `200` carrying `Success: false` | 26 of 26, exit code 1 |
 | Request bodies | Persian intact, nested arrays real, numbers not strings |
 | `Send` query string | percent-encoded exactly once |
 

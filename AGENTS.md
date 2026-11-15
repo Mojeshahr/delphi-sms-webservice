@@ -22,7 +22,7 @@ here is worth reporting as an issue rather than working around silently.
 
 ## Which set to use
 
-There are two complete sets of the same eleven examples:
+There are two complete sets of the same thirteen examples:
 
 | | `examples/v3/` | `examples/v3-indy/` |
 |---|---|---|

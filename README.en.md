@@ -48,7 +48,7 @@ answers then both the key and the connection are fine.
 its TLS from Windows itself, and needs nothing installed. If you are writing
 something new, or your Delphi is current, take this one.
 
-`examples/v3-indy/` has the same eleven methods written with `TIdHTTP`. It is
+`examples/v3-indy/` has the same thirteen methods written with `TIdHTTP`. It is
 for the developer maintaining older software whose whole project already runs
 on Indy, where adding a second HTTP stack is a nuisance and rewriting is not an
 option.
@@ -87,7 +87,7 @@ exception is `TokenList`, which the sandbox does not implement.
 | [status-by-user-trace-id.dpr](examples/v3/status-by-user-trace-id.dpr) | `StatusByUserTraceId` | Status by your own id |
 | [get-inbox.dpr](examples/v3/get-inbox.dpr) | `GetInbox` | Messages people sent to your lines |
 
-The same eleven names exist under `examples/v3-indy/`.
+The same thirteen names exist under `examples/v3-indy/`.
 
 ## If it fails on your Delphi, please tell us
 

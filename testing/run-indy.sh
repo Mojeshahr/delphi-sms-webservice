@@ -13,7 +13,7 @@ trap 'kill $STUB 2>/dev/null' EXIT
 status=0
 for f in examples/v3-indy/*.dpr; do
   name=$(basename "$f")
-  sed 's#https://api.sms-webservice.com#http://127.0.0.1:8099#' "$f" > "/tmp/src/$name"
+  sed 's#https://www.payam-resan.com#http://127.0.0.1:8099#' "$f" > "/tmp/src/$name"
 
   build=$(fpc -Mdelphi -Fcutf8 -Fu/shims -FE/tmp/build -o"/tmp/build/i-${name%.dpr}" "/tmp/src/$name" 2>&1)
   if [ $? -ne 0 ]; then

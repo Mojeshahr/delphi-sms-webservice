@@ -33,7 +33,7 @@ var
 begin
   // متد Encode دقیقاً یک بار encode می‌کند. اگر متن را خودتان هم پیش از این
   // encode کنید، پیامک با نویسه‌های %D8 به گوشی می‌رسد.
-  Url := 'https://api.sms-webservice.com/api/V3/Send'
+  Url := 'https://www.payam-resan.com/api/V3/Send'
        + '?ApiKey=' + TNetEncoding.URL.Encode(GetEnvironmentVariable('PAYAM_RESAN_API_KEY'))
        + '&Sender=' + TNetEncoding.URL.Encode(GetEnvironmentVariable('PAYAM_RESAN_SENDER'))
        + '&Text=' + TNetEncoding.URL.Encode('کد تأیید شما ۱۲۳۴۵۶ است')

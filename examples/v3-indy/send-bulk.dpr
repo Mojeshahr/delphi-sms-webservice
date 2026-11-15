@@ -62,7 +62,7 @@ begin
   // ویندوز می‌رود و پیامک به‌شکل علامت سؤال به گوشی می‌رسد.
   Body := TStringStream.Create(Payload.ToJSON, TEncoding.UTF8);
   try
-    Answer := Http.Post('https://api.sms-webservice.com/api/V3/SendBulk', Body);
+    Answer := Http.Post('https://www.payam-resan.com/api/V3/SendBulk', Body);
   finally
     Body.Free;
   end;

@@ -13,7 +13,7 @@ sleep 3
 trap 'kill $STUB 2>/dev/null' EXIT
 
 status=0
-for f in examples/v3/*.dpr; do
+for f in examples/v3/*.dpr examples/v3-indy/*.dpr; do
   name=$(basename "$f")
   sed 's#https://www.payam-resan.com/api/V3/#http://127.0.0.1:8099/api/V3/Unknown#' "$f" > "/tmp/fail/$name"
 
