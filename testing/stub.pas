@@ -33,6 +33,8 @@ begin
     Result := Head + '[{"Id":687330950172013,"UserTraceId":1001},{"Id":687330950172014,"UserTraceId":1002}]}'
   else if AMethod = 'SendTokenSingle' then
     Result := Head + '[{"UserTraceId":null,"Id":687330950172013,"Sender":30004040,"FinalText":"کد تأیید شما 123456 است"}]}'
+  else if AMethod = 'SendTokenSingleConcatParam' then
+    Result := Head + '[{"UserTraceId":null,"Id":9007199254740993,"Sender":50002454,"FinalText":"مرسوله شما از شیراز تحویل پست شد. بارکد مرسوله پستی: BARCODE-AAA"}]}'
   else if AMethod = 'SendTokenMulti' then
     Result := Head + '[{"UserTraceId":1001,"Id":687330950172013,"Sender":30004040,"FinalText":"مرسوله شما از شیراز تحویل پست شد"},{"UserTraceId":1002,"Id":687330950172014,"Sender":30004040,"FinalText":"مرسوله شما از تبریز تحویل پست شد"}]}'
   else if AMethod = 'StatusById' then

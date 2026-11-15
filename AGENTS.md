@@ -1,7 +1,7 @@
 # Working with this repository
 
 You are looking at runnable Delphi examples for the **Payam Resan** SMS web
-service (`api.sms-webservice.com`, API V3), an Iranian SMS provider. Someone is
+service (`www.payam-resan.com`, API V3), an Iranian SMS provider. Someone is
 probably asking you to add SMS to a Delphi application — often an existing
 business, accounting or inventory program.
 

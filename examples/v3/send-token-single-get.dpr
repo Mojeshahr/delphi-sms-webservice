@@ -30,7 +30,7 @@ var
   Sent: TJSONArray;
   Index: Integer;
 begin
-  Url := 'https://api.sms-webservice.com/api/V3/SendTokenSingle'
+  Url := 'https://www.payam-resan.com/api/V3/SendTokenSingle'
        + '?ApiKey=' + TNetEncoding.URL.Encode(GetEnvironmentVariable('PAYAM_RESAN_API_KEY'))
        + '&TemplateKey=' + TNetEncoding.URL.Encode('verifycode')
        + '&Destination=' + TNetEncoding.URL.Encode('9121112222')

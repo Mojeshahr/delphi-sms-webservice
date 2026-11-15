@@ -65,7 +65,7 @@ begin
   Body := TStringStream.Create(Payload.ToJSON, TEncoding.UTF8);
   try
     Answer := Client.Post(
-      'https://api.sms-webservice.com/api/V3/SendTokenMulti',
+      'https://www.payam-resan.com/api/V3/SendTokenMulti',
       Body, nil,
       [TNameValuePair.Create('Content-Type', 'application/json; charset=utf-8')]);
   finally

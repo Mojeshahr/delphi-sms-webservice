@@ -91,6 +91,8 @@ HTTP را عوض می‌کند، نه کف نسخه را تا دلفی ۷. اگ�
 | [token-list.dpr](examples/v3/token-list.dpr) | `TokenList` | فهرست قالب‌ها |
 | [send-token-single.dpr](examples/v3/send-token-single.dpr) | `SendTokenSingle` | ارسال قالب به یک شماره |
 | [send-token-single-get.dpr](examples/v3/send-token-single-get.dpr) | `SendTokenSingle` | همان، با `GET` |
+| [send-token-single-concat-param.dpr](examples/v3/send-token-single-concat-param.dpr) | `SendTokenSingleConcatParam` | مقادیر قالب در رشته `p` با جداکننده نقطه‌ویرگول |
+| [send-token-single-concat-param-get.dpr](examples/v3/send-token-single-concat-param-get.dpr) | `SendTokenSingleConcatParam` | همان، با `GET` |
 | [send-token-multi.dpr](examples/v3/send-token-multi.dpr) | `SendTokenMulti` | یک قالب، چند گیرنده |
 | [status-by-id.dpr](examples/v3/status-by-id.dpr) | `StatusById` | وضعیت با شناسه سامانه |
 | [status-by-user-trace-id.dpr](examples/v3/status-by-user-trace-id.dpr) | `StatusByUserTraceId` | وضعیت با شناسه خودتان |

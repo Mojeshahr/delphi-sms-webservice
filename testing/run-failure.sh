@@ -15,7 +15,7 @@ trap 'kill $STUB 2>/dev/null' EXIT
 status=0
 for f in examples/v3/*.dpr; do
   name=$(basename "$f")
-  sed 's#https://api.sms-webservice.com/api/V3/#http://127.0.0.1:8099/api/V3/Unknown#' "$f" > "/tmp/fail/$name"
+  sed 's#https://www.payam-resan.com/api/V3/#http://127.0.0.1:8099/api/V3/Unknown#' "$f" > "/tmp/fail/$name"
 
   fpc -Mdelphi -Fcutf8 -Fu/shims -FE/tmp/build -o"/tmp/build/f-${name%.dpr}" "/tmp/fail/$name" >/dev/null 2>&1
 

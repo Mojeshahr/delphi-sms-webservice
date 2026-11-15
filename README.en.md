@@ -80,6 +80,8 @@ exception is `TokenList`, which the sandbox does not implement.
 | [token-list.dpr](examples/v3/token-list.dpr) | `TokenList` | The account's templates |
 | [send-token-single.dpr](examples/v3/send-token-single.dpr) | `SendTokenSingle` | Send a template to one number |
 | [send-token-single-get.dpr](examples/v3/send-token-single-get.dpr) | `SendTokenSingle` | The same, over `GET` |
+| [send-token-single-concat-param.dpr](examples/v3/send-token-single-concat-param.dpr) | `SendTokenSingleConcatParam` | Template values in one semicolon-separated `p` string |
+| [send-token-single-concat-param-get.dpr](examples/v3/send-token-single-concat-param-get.dpr) | `SendTokenSingleConcatParam` | The same, over `GET` |
 | [send-token-multi.dpr](examples/v3/send-token-multi.dpr) | `SendTokenMulti` | One template, many recipients |
 | [status-by-id.dpr](examples/v3/status-by-id.dpr) | `StatusById` | Status by the service's id |
 | [status-by-user-trace-id.dpr](examples/v3/status-by-user-trace-id.dpr) | `StatusByUserTraceId` | Status by your own id |
